@@ -56,6 +56,7 @@ static const FunctionProvider all_function_providers[] = {
 	{OutputFunction::Constant_Min, &FunctionConstantMin::allocate},
 	{OutputFunction::Constant_Max, &FunctionConstantMax::allocate},
 	{OutputFunction::Motor1, OutputFunction::MotorMax, &FunctionMotors::allocate},
+	{OutputFunction::Jet1, OutputFunction::JetMax, &FunctionJets::allocate},
 	{OutputFunction::Servo1, OutputFunction::ServoMax, &FunctionServos::allocate},
 	{OutputFunction::Offboard_Actuator_Set1, OutputFunction::Offboard_Actuator_Set6, &FunctionActuatorSet::allocate},
 	{OutputFunction::Landing_Gear, &FunctionLandingGear::allocate},
@@ -196,6 +197,17 @@ void MixingOutput::updateParams()
 
 	if (function_changed) {
 		_need_function_update = true;
+	}
+
+	for (int i = 0; i < _max_num_outputs; ++i) {
+		if (_functions[i] && (_function_assignment[i] >= OutputFunction::Jet1 && _function_assignment[i] <= OutputFunction::JetMax) ) {
+
+			_functions[i]->setPIDGain(_param_jet_k.get()*_param_jet_p.get(),
+						  _param_jet_k.get()*_param_jet_i.get(),
+						  _param_jet_k.get()*_param_jet_d.get(),
+						  _param_jet_t.get(),
+						  _param_jet_en.get());
+		}
 	}
 }
 

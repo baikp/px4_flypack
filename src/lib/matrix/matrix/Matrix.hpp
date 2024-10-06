@@ -121,6 +121,17 @@ public:
 			}
 		}
 	}
+	void copyFrom(const Type data_[M * N])
+	{
+		Matrix<Type, M, N> &self = *this;
+
+		for (size_t i = 0; i < M; i++) {
+			for (size_t j = 0; j < N; j++) {
+				self(i, j) = data_[N * i + j];
+				// _data[i][j] = data_[N * i + j];
+			}
+		}
+	}
 
 	void copyToColumnMajor(Type dst[M * N]) const
 	{

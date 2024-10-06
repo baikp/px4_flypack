@@ -71,3 +71,73 @@ PARAM_DEFINE_FLOAT(MOT_SLEW_MAX, 0.0f);
  * @group PWM Outputs
  */
 PARAM_DEFINE_FLOAT(THR_MDL_FAC, 0.0f);
+
+/**
+ * Jet P gain
+ *
+ * Jet proportional gain, i.e. control output for angular speed error 1 rad/s.
+ *
+ * @min 0.01
+ * @max 20
+ * @decimal 4
+ * @increment 0.01
+ * @group Multicopter Rate Control
+ */
+PARAM_DEFINE_FLOAT(JET_P, 4.5f);
+/**
+ * Jet I gain
+ *
+ * Jet integral gain, i.e. control output for angular speed error 1 rad/s.
+ *
+ * @min 0.01
+ * @max 20
+ * @decimal 4
+ * @increment 0.01
+ * @group Multicopter Rate Control
+ */
+PARAM_DEFINE_FLOAT(JET_I, 5.0f);
+/**
+ * Jet D gain
+ *
+ * Jet differential gain, i.e. control output for angular speed error 1 rad/s.
+ *
+ * @min 0.01
+ * @max 20
+ * @decimal 4
+ * @increment 0.01
+ * @group Multicopter Rate Control
+ */
+PARAM_DEFINE_FLOAT(JET_D, 0.35f);
+/**
+ * Jet T gain
+ *
+ * Jet differential gain, i.e. control output for angular speed error 1 rad/s.
+ *
+ * @min 0.01
+ * @max 20
+ * @decimal 4
+ * @increment 0.01
+ * @group Multicopter Rate Control
+ */
+PARAM_DEFINE_FLOAT(JET_T, 1.5f);
+/**
+ * Jet K gain
+ *
+ * Jet total gain, i.e. control output for angular speed error 1 rad/s.
+ *
+ * @min 0.01
+ * @max 20
+ * @decimal 4
+ * @increment 0.01
+ * @group Multicopter Rate Control
+ */
+PARAM_DEFINE_FLOAT(JET_K, 1.0f);
+/**
+ * Jet close loop enable variable
+ *
+ *
+ *
+ * @boolean
+ * @group Multicopter Rate Control
+ */
+PARAM_DEFINE_INT32(JET_LOOP_EN, 0);

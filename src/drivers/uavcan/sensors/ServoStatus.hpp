@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (c) 2021-2022 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2019 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,45 +33,34 @@
 
 #pragma once
 
-#include <limits.h>
+#include "sensor_bridge.hpp"
 
-#include <mixer_module/output_functions.hpp>
+#include <stdint.h>
 
-#include <uORB/Subscription.hpp>
-#include <uORB/SubscriptionCallback.hpp>
+#include <uORB/topics/servo_status.h>
 
-#include <px4_platform_common/px4_work_queue/ScheduledWorkItem.hpp>
+#include <flypack/ServoStatus.hpp>
 
-class FunctionProviderBase
+class UavcanServoStatusBridge : public UavcanSensorBridgeBase
 {
 public:
-	struct Context {
-		px4::WorkItem &work_item;
-		const float &thrust_factor;
-	};
+	static const char *const NAME;
 
-	FunctionProviderBase() = default;
-	virtual ~FunctionProviderBase() = default;
+	UavcanServoStatusBridge(uavcan::INode &node);
 
-	virtual void update() = 0;
+	const char *get_name() const override { return NAME; }
 
-	/**
-	 * Get the current output value for a given function
-	 * @return NAN (=disarmed) or value in range [-1, 1]
-	 */
-	virtual float value(OutputFunction func) = 0;
+	int init() override;
 
-	virtual float defaultFailsafeValue(OutputFunction func) const { return NAN; }
-	virtual bool allowPrearmControl() const { return true; }
+private:
 
-	virtual uORB::SubscriptionCallbackWorkItem *subscriptionCallback() { return nullptr; }
+	void servo_status_sub_cb(const uavcan::ReceivedDataStructure<flypack::ServoStatus> &msg);
 
-	virtual bool getLatestSampleTimestamp(hrt_abstime &t) const { return false; }
+	typedef uavcan::MethodBinder < UavcanServoStatusBridge *,
+		void (UavcanServoStatusBridge::*)
+		(const uavcan::ReceivedDataStructure<flypack::ServoStatus> &) >
+		ServoStatusCbBinder;
 
-	/**
-	 * Check whether the output (motor) is configured to be reversible
-	 */
-	virtual bool reversible(OutputFunction func) const { return false; }
+	uavcan::Subscriber<flypack::ServoStatus, ServoStatusCbBinder> _sub_servo_status;
 
-	virtual void setPIDGain(float kp,float ki,float kd, float Tt, bool loop_en){};
 };

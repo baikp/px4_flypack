@@ -131,12 +131,12 @@ void LoggedTopics::add_default_topics()
 	add_topic("wind", 1000);
 
 	// multi topics
-	add_optional_topic_multi("actuator_outputs", 100, 3);
+	add_optional_topic_multi("actuator_outputs", 0, 3);
 	add_optional_topic_multi("airspeed_wind", 1000, 4);
 	add_optional_topic_multi("control_allocator_status", 200, 2);
 	add_optional_topic_multi("rate_ctrl_status", 200, 2);
 	add_optional_topic_multi("sensor_hygrometer", 500, 4);
-	add_optional_topic_multi("rpm", 200);
+	// add_optional_topic_multi("rpm", 200);
 	add_optional_topic_multi("telemetry_status", 1000, 4);
 
 	// EKF multi topics (currently max 9 estimators)
@@ -309,6 +309,9 @@ void LoggedTopics::add_high_rate_topics()
 	add_topic("actuator_motors");
 	add_topic("vehicle_thrust_setpoint");
 	add_topic("vehicle_torque_setpoint");
+
+	add_topic("engine_status");
+	add_topic("jet_controller");
 }
 
 void LoggedTopics::add_debug_topics()

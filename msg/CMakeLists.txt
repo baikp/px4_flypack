@@ -221,6 +221,9 @@ set(msg_files
 	VtolVehicleStatus.msg
 	Wind.msg
 	YawEstimatorStatus.msg
+	EngineStatus.msg  #flypack
+	JetController.msg #flypack
+	ServoStatus.msg #flypack
 )
 list(SORT msg_files)
 

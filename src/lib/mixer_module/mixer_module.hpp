@@ -46,6 +46,7 @@
 #include "functions/FunctionMotors.hpp"
 #include "functions/FunctionParachute.hpp"
 #include "functions/FunctionServos.hpp"
+#include "functions/FunctionJets.hpp"
 
 #include <board_config.h>
 #include <drivers/drv_pwm_output.h>
@@ -295,6 +296,12 @@ private:
 
 
 	DEFINE_PARAMETERS(
+		(ParamFloat<px4::params::JET_P>) _param_jet_p,
+		(ParamFloat<px4::params::JET_I>) _param_jet_i,
+		(ParamFloat<px4::params::JET_T>) _param_jet_t,
+		(ParamFloat<px4::params::JET_D>) _param_jet_d,
+		(ParamFloat<px4::params::JET_K>) _param_jet_k,
+		(ParamBool<px4::params::JET_LOOP_EN>) _param_jet_en,
 		(ParamInt<px4::params::MC_AIRMODE>) _param_mc_airmode,   ///< multicopter air-mode
 		(ParamFloat<px4::params::MOT_SLEW_MAX>) _param_mot_slew_max,
 		(ParamFloat<px4::params::THR_MDL_FAC>) _param_thr_mdl_fac ///< thrust to motor control signal modelling factor

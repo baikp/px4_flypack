@@ -1,6 +1,6 @@
 ############################################################################
 #
-#   Copyright (c) 2019 PX4 Development Team. All rights reserved.
+#   Copyright (c) 2015 PX4 Development Team. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,43 +30,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 ############################################################################
+px4_add_module(
+	MODULE drivers__coprocessor_uart
+	MAIN coprocessor_uart
+	COMPILE_FLAGS
+	SRCS
+		coprocessor_uart.cpp
+		coprocessor_uart.hpp
+		protocol.hpp
 
-set(functions_header ${CMAKE_CURRENT_BINARY_DIR}/output_functions.hpp)
-add_custom_command(OUTPUT ${functions_header}
-	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate_function_header.py
-		${CMAKE_CURRENT_SOURCE_DIR}/output_functions.yaml
-		${functions_header}
 	DEPENDS
-		output_functions.yaml
-		generate_function_header.py
-	COMMENT "Generating output_functions.hpp"
-)
-add_custom_target(output_functions_header DEPENDS ${functions_header})
-
-px4_add_library(mixer_module
-	functions/FunctionActuatorSet.hpp
-	functions/FunctionConstantMax.hpp
-	functions/FunctionConstantMin.hpp
-	functions/FunctionGimbal.hpp
-	functions/FunctionLandingGear.hpp
-	functions/FunctionManualRC.hpp
-	functions/FunctionMotors.hpp
-	functions/FunctionParachute.hpp
-	functions/FunctionServos.hpp
-	functions/FunctionJets.hpp
-	functions/JetsController/discreteController.hpp
-	functions/JetsController/discreteTransferFun.hpp
-	functions/JetsController/jetEngineInterp.hpp
-	functions/JetsController/jetsParameter.cpp
-
-	actuator_test.cpp
-	actuator_test.hpp
-	mixer_module.cpp
-	mixer_module.hpp
+		px4_work_queue
 	)
 
-add_dependencies(mixer_module output_functions_header)
-target_compile_options(mixer_module PRIVATE ${MAX_CUSTOM_OPT_LEVEL})
-target_include_directories(mixer_module PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-
-px4_add_functional_gtest(SRC mixer_module_tests.cpp LINKLIBS mixer_module)
+if (PX4_CONFIG STREQUAL "px4_sitl_default")
+	message(STATUS "Building for px4_sitl_default configuration")
+	# Custom logic for SITL
+endif()

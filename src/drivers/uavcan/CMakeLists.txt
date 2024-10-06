@@ -108,6 +108,7 @@ set(DSDLC_INPUTS
 	"${LIBUAVCAN_DIR}/dsdl/cuav"
 	"${LIBUAVCAN_DIR}/dsdl/dronecan"
 	"${LIBUAVCAN_DIR}/dsdl/uavcan"
+	"${LIBUAVCAN_DIR}/dsdl/flypack"
 )
 set(DSDLC_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/include/dsdlc_generated")
 
@@ -175,6 +176,7 @@ px4_add_module(
 		sensors/ice_status.cpp
 		sensors/hygrometer.cpp
 		sensors/safety_button.cpp
+		sensors/ServoStatus.cpp
 	MODULE_CONFIG
 		module.yaml
 	DEPENDS

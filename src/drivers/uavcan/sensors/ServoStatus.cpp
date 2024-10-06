@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (c) 2021-2022 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2019 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,47 +31,44 @@
  *
  ****************************************************************************/
 
-#pragma once
+#include "ServoStatus.hpp"
 
-#include <limits.h>
+#include <drivers/drv_hrt.h>
 
-#include <mixer_module/output_functions.hpp>
+const char *const UavcanServoStatusBridge::NAME = "ServoStatus";
 
-#include <uORB/Subscription.hpp>
-#include <uORB/SubscriptionCallback.hpp>
-
-#include <px4_platform_common/px4_work_queue/ScheduledWorkItem.hpp>
-
-class FunctionProviderBase
+UavcanServoStatusBridge::UavcanServoStatusBridge(uavcan::INode &node) :
+	UavcanSensorBridgeBase("uavcan_servo_status", ORB_ID(servo_status)),
+	_sub_servo_status(node)
 {
-public:
-	struct Context {
-		px4::WorkItem &work_item;
-		const float &thrust_factor;
-	};
+}
 
-	FunctionProviderBase() = default;
-	virtual ~FunctionProviderBase() = default;
+int
+UavcanServoStatusBridge::init()
+{
+	int res = _sub_servo_status.start(ServoStatusCbBinder(this, &UavcanServoStatusBridge::servo_status_sub_cb));
 
-	virtual void update() = 0;
+	if (res < 0) {
+		DEVICE_LOG("failed to start uavcan sub: %d", res);
+		return res;
+	}
 
-	/**
-	 * Get the current output value for a given function
-	 * @return NAN (=disarmed) or value in range [-1, 1]
-	 */
-	virtual float value(OutputFunction func) = 0;
+	return 0;
+}
 
-	virtual float defaultFailsafeValue(OutputFunction func) const { return NAN; }
-	virtual bool allowPrearmControl() const { return true; }
+void UavcanServoStatusBridge::servo_status_sub_cb(const uavcan::ReceivedDataStructure<flypack::ServoStatus> &msg)
+{
+	servo_status_s _servo_status{};
+	_servo_status.timestamp = hrt_absolute_time();
+	_servo_status.servo_id = msg.Servo_ID;
+	_servo_status.pwm_input = msg.PWM_INPUT;
+	_servo_status.pos_cmd = msg.POS_CMD;
+	_servo_status.pos_sensor = msg.POS_SENSOR;
+	_servo_status.voltage = msg.VOLTAGE;
+	_servo_status.current = msg.CURRENT;
+	_servo_status.pcb_temp = msg.PCB_Temp;
+	_servo_status.motor_temp = msg.MOTOR_Temp;
+	_servo_status.statusinfo = msg.StatusInfo;
 
-	virtual uORB::SubscriptionCallbackWorkItem *subscriptionCallback() { return nullptr; }
-
-	virtual bool getLatestSampleTimestamp(hrt_abstime &t) const { return false; }
-
-	/**
-	 * Check whether the output (motor) is configured to be reversible
-	 */
-	virtual bool reversible(OutputFunction func) const { return false; }
-
-	virtual void setPIDGain(float kp,float ki,float kd, float Tt, bool loop_en){};
-};
+	publish(msg.getSrcNodeID().get(), &_servo_status);
+}

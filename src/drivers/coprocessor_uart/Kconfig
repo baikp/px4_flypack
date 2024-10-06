@@ -1,0 +1,5 @@
+menuconfig DRIVERS_COPROCESSOR_UART
+	bool "coprocessor_uart"
+	default n
+	---help---
+		Enable support for coprocessor uart
